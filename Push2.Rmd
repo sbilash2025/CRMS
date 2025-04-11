@@ -1,0 +1,63 @@
+---
+title: "Push2"
+author: "Sebastian Bilash"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{bash}
+#psmcr shell script
+
+#!/bin/bash
+#SBATCH --job-name=psmcr.test # Give your job a name
+#SBATCH --output=psmcr.test.out # Name a file to contain code outputs
+#SBATCH --error=psmcr.test.err # Name a file to contain error messages
+#SBATCH --time=0-06:00:00 # Edit this parameter to specify a time
+#SBATCH --mail-user=suesser.j@northeastern.edu # Add your email
+#SBATCH --ntasks=1 # Let's start with one task
+#SBATCH --ntasks-per-node=1 # Let's start with just one task per node
+#SBATCH --mail-type=ALL
+#SBATCH --mem=40G # How many gigabytes of memory does this job need?
+#SBATCH --cpus-per-task= nan8 # How many CPUs do you think this code needs?
+
+# Load R Software
+module load R
+
+# Move to wd
+cd /home/bilash.s/crms/psmc
+
+# Paths to data
+VCF_FILE="/courses/EEMB5538.202530/data/Zm_TomBod_MAF01MM85INDM30_AllChr.recode.vcf.gz"
+
+REF_GENOME="/courses/EEMB5538.202530/data/Zmarina_668_v2.0.fa"
+
+OUTPUT_DNABIN="output_dnabin.rds"
+
+R_SCRIPT="run_vcf2dnabin.R"
+
+# R Script
+cat > $R_SCRIPT <<EOF
+library(psmcr)
+
+dnabin_obj <- VCF2DNAbin("$VCF_FILE",
+                         refgenome = "$REF_GENOME",
+                         individual = 69)
+
+# Save DNA Bin object
+saveRDS
+(dnabin_obj, file="$OUTPUT_DNABIN")
+
+# Run psmcr
+psmcr_result <- psmc(dnabin_obj, niters=5, B = 30, mc.cores = 8)
+
+saveRDS(psmcr_result, file="psmcr.rds")
+
+EOF
+
+# Run R script
+Rscript $R_SCRIPT
+```
