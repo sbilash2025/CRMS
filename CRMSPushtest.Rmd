@@ -1,0 +1,36 @@
+---
+title: "practice_hpc_script"
+author: "Sebastian Bilash"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is my practice SLURM job script from HPC practice part 1
+
+```{bash}
+
+#!/bin/bash
+#SBATCH --job-name=CRMS1Bilash 
+#SBATCH --output=CRMS1Bilash.out 
+#SBATCH --error=CRMS1Bilash.err 
+#SBATCH --time=0-00:01:00 
+#SBATCH --mail-user=bilash.s@northeastern.edu 
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1 
+#SBATCH --mail-type=ALL
+#SBATCH --mem=4G 
+#SBATCH --cpus-per-task=1
+
+#make a new directory
+mkdir/home/bilash.s/crms/day2_test
+
+cd /home/bilash.s/crms/day2_test
+
+echo "poopootrail" > day2test.txt
+
+```
+
